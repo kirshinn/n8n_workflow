@@ -13,6 +13,8 @@ services:
       - ./data:/var/lib/postgresql/data
       - ./postgresql.conf:/etc/postgresql/postgresql.conf
       - ./pg_hba.conf:/etc/postgresql/pg_hba.conf
+    networks:
+      - default
     command: postgres -c config_file=/etc/postgresql/postgresql.conf
 
   n8n:
@@ -29,9 +31,21 @@ services:
       - DB_POSTGRESDB_USER=postgres
       - DB_POSTGRESDB_SCHEMA=public
       - DB_POSTGRESDB_PASSWORD=mysecretpassword
+      - WEBHOOK_URL=https://example.com
+      - WEBHOOK_TUNNEL_URL=https://example.com
+      - N8N_PROTOCOL=https
+      - N8N_HOST=example.com
+      - N8N_ENFORCE_SETTINGS_FILE_PERMISSIONS=true
+      - N8N_RUNNERS_ENABLED=true
     volumes:
       - n8n_data:/home/node/.n8n
+    networks:
+      - default
 
 volumes:
   n8n_data:
 
+networks:
+  default:
+    name: n8n_network
+    driver: bridge
